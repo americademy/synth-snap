@@ -45,7 +45,7 @@ parts:
 
   pulseaudio-example:
     plugin: cmake
-    source: src
+    source: pulseaudio-example
     build-packages:
       - build-essential
       - libpulse-dev
