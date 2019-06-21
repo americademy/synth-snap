@@ -28,6 +28,30 @@ apps:
     plugs:
       - gpio-memory-control
 
+  chromium:
+    command: usr/lib/chromium-browser/chromium-browser
+    environment:
+      CHROME_DESKTOP: chromium-browser.desktop
+    plugs:
+      - browser-support
+      - desktop
+      - hardware-observe
+      - home
+      - network
+      - network-manager
+      - opengl
+      - password-manager-service
+      - removable-media
+      - screen-inhibit-control
+      - wayland
+      - x11-plug
+    slots:
+      - x11
+
+plugs:
+  x11-plug: # because cannot have identical plug/slot name in same yaml.
+    interface: x11
+
 parts:
   web-api:
     source: .
