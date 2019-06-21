@@ -49,3 +49,9 @@ parts:
     build-packages:
       - build-essential
       - libpulse-dev
+      
+  headless-chromium:
+    source: .
+    plugin: nil
+    stage-packages:
+      - chromium-browser
