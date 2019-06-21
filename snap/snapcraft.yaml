@@ -1,0 +1,34 @@
+name: codeverse-synth
+version: 0.0.1
+architectures:
+  - build-on: armhf
+summary: Sound maker for the Codeverse studios
+description: |
+  An audio player and sound generator which exposes a web API, runs on a Codeverse module and used within the Codeverse Studios
+confinement: strict
+grade: stable
+build-packages: [gcc]
+
+apps:
+  web-api:
+    command: webserver www
+    daemon: simple
+    restart-condition: always
+    plugs:
+      - network-bind
+
+  gpio-control:
+    command: enable-sound-card
+    plugs:
+      - gpio-memory-control
+
+parts:
+  web-api:
+    source: .
+    plugin: go
+    go-importpath: github.com/americademy/synth-snap
+
+  dmx-client:
+    source: .
+    source-subdir: enable-sound-card
+    plugin: make
