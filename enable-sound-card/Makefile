@@ -4,4 +4,4 @@ server: enable-sound-card.c
 
 install:
 	install -d -m755  $(DESTDIR)/bin/
-	install -m755 server $(DESTDIR)/bin/enable-sound-card
+	install -m755 enable-sound-card $(DESTDIR)/bin/enable-sound-card
