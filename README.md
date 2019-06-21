@@ -15,6 +15,11 @@ dtoverlay=hifiberry-dac
 sudo reboot
 ```
 
+install pulseaudio
+```
+snap install pulseaudio
+```
+
 install our snap
 
 ```
