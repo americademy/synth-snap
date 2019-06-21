@@ -17,6 +17,12 @@ apps:
     plugs:
       - network-bind
 
+  pulseaudio-example:
+    command: bin/client-wrapper usr/bin/pulseaudio-example
+    plugs:
+      - pulseaudio
+      - home
+
   gpio-control:
     command: enable-sound-card
     plugs:
@@ -28,7 +34,18 @@ parts:
     plugin: go
     go-importpath: github.com/americademy/synth-snap
 
-  dmx-client:
+  gpio-control:
     source: .
     source-subdir: enable-sound-card
     plugin: make
+
+  pulseaudio-example-common:
+    plugin: dump
+    source: overlay
+
+  pulseaudio-example:
+    plugin: cmake
+    source: src
+    build-packages:
+      - build-essential
+      - libpulse-dev
