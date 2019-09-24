@@ -1,5 +1,6 @@
 name: codeverse-synth
 version: 0.0.2
+base: core18
 architectures:
   - build-on: armhf
 summary: Sound maker for the Codeverse studios
