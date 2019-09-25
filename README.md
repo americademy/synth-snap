@@ -39,5 +39,5 @@ sudo /snap/codeverse-synth/current/bin/enable-sound-card
 
 Now you can play a wav file by doing:
 ```
-sudo pulseaudio-example /var/snap/pulseaudio-example/common/<file.wav>
+sudo pulseaudio-example /var/snap/codeverse-synth/current/<file.wav>
 ```
