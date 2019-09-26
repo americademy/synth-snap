@@ -53,7 +53,7 @@ parts:
       - build-essential
       - libpulse-dev
 
-    sox:
+  sox:
     plugin: nil
     stage-packages:
       - sox
