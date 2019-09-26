@@ -16,6 +16,8 @@ apps:
     daemon: simple
     restart-condition: always
     plugs:
+      - pulseaudio
+      - home
       - network-bind
 
   pulseaudio-example:
@@ -24,34 +26,10 @@ apps:
       - pulseaudio
       - home
 
-  gpio-control:
+  enable-sound-card:
     command: enable-sound-card
     plugs:
       - gpio-memory-control
-
-  chromium:
-    command: usr/lib/chromium-browser/chromium-browser
-    environment:
-      CHROME_DESKTOP: chromium-browser.desktop
-    plugs:
-      - browser-support
-      - desktop
-      - hardware-observe
-      - home
-      - network
-      - network-manager
-      - opengl
-      - password-manager-service
-      - removable-media
-      - screen-inhibit-control
-      - wayland
-      - x11-plug
-    slots:
-      - x11
-
-plugs:
-  x11-plug: # because cannot have identical plug/slot name in same yaml.
-    interface: x11
 
 parts:
   web-api:
@@ -59,7 +37,7 @@ parts:
     plugin: go
     go-importpath: github.com/americademy/synth-snap
 
-  gpio-control:
+  enable-sound-card:
     source: .
     source-subdir: enable-sound-card
     plugin: make
@@ -74,9 +52,12 @@ parts:
     build-packages:
       - build-essential
       - libpulse-dev
-      
-  headless-chromium:
-    source: .
+
+    sox:
     plugin: nil
     stage-packages:
-      - chromium-browser
+      - sox
+      - libsox-fmt-pulse
+      - pulseaudio
+
+
