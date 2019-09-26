@@ -4,7 +4,24 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"time"
 )
+
+func maxClients(h http.Handler, n int) http.Handler {
+	sema := make(chan struct{}, n)
+
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		sema <- struct{}{}
+		defer func() { <-sema }()
+
+		h.ServeHTTP(w, r)
+	})
+}
+
+func getStatus(w http.ResponseWriter, r *http.Request) {
+	time.Sleep(2 * time.Second)
+	w.Write([]byte("OK"))
+}
 
 func play(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
@@ -41,11 +58,23 @@ func assertFile(sound string) error {
 }
 
 func main() {
+	// start web server
+	println("Starting Server")
+
 	assertDirectoryExists()
-	http.HandleFunc("/play", play)
+
+	playHandler := http.HandlerFunc(play)
+	http.Handle("/play", maxClients(playHandler, 20))
+
+	statusHandler := http.HandlerFunc(getStatus)
+	http.Handle("/status", maxClients(statusHandler, 5))
+
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		panic(err)
 	}
+
+	println("Ready")
+
 }
 
 func enableCors(w *http.ResponseWriter) {
@@ -65,6 +94,7 @@ func assertDirectoryExists() {
 	path := getFilePath()
 	// make the directory if it doesn't exist
 	if _, err := os.Stat(path); os.IsNotExist(err) {
+		println("Creating folder " + path)
 		os.Mkdir(path, os.ModePerm)
 	}
 }
@@ -74,6 +104,8 @@ func assertDirectoryExists() {
 func DownloadSound(sound string) error {
 	url := "http://sounds.codeverse.com/" + sound
 	file := getFilePath() + sound
+
+	println("Downloading " + url)
 
 	// Get the data
 	resp, err := http.Get(url)
