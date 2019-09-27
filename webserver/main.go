@@ -84,8 +84,8 @@ func enableCors(w *http.ResponseWriter) {
 func getFilePath() string {
 	path := "sounds/"
 	// When running inside a snap, store the file in the snap data folder
-	if os.Getenv("SNAP_DATA") != "" {
-		path = os.Getenv("SNAP_DATA") + "/" + path
+	if os.Getenv("SNAP_COMMON") != "" {
+		path = os.Getenv("SNAP_COMMON") + "/" + path
 	}
 	return path
 }

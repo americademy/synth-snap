@@ -21,7 +21,7 @@ apps:
       - network-bind
 
   play-mp3:
-    command: bin/client-wrapper usr/bin/mpg123.bin
+    command: bin/client-wrapper
     plugs:
       - pulseaudio
       - home

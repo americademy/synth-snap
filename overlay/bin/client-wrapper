@@ -17,9 +17,15 @@
 export LD_LIBRARY_PATH=./usr/lib/arm-linux-gnueabihf
 export MPG123_MODDIR=./usr/lib/arm-linux-gnueabihf/mpg123
 
+echo data
 echo $SNAP_DATA
 echo "$SNAP_DATA$@"
 echo "$SNAP_DATA/$@"
+
+echo common
+echo $SNAP_COMMON
+echo "$SNAP_COMMON$@"
+echo "$SNAP_COMMON/$@"
 
 echo "$SNAP"
 
@@ -31,4 +37,4 @@ echo $command
 shift
 exec "$command" "$@"
 
-exec "$command" "$@ -v $SNAP_DATA/sounds/quindar_tones_stereo.mp3"
+exec "$command" "$@ -v $SNAP_COMMON/sounds/quindar_tones_stereo.mp3"
