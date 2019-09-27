@@ -21,7 +21,7 @@ apps:
       - network-bind
 
   play-mp3:
-    command: bin/client-wrapper
+    command: bin/client-wrapper usr/bin/mpg123.bin
     plugs:
       - pulseaudio
       - home
@@ -41,6 +41,10 @@ parts:
     source: .
     source-subdir: enable-sound-card
     plugin: make
+
+  client-wrapper:
+    plugin: dump
+    source: overlay
 
   mpg123:
     plugin: nil
