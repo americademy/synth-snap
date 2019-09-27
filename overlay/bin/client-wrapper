@@ -14,9 +14,21 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export PULSE_RUNTIME_PATH=/var/run/pulse
-export PULSE_SYSTEM=1
+export LD_LIBRARY_PATH=./usr/lib/arm-linux-gnueabihf
+export MPG123_MODDIR=./usr/lib/arm-linux-gnueabihf/mpg123
 
+echo $SNAP_DATA
+echo "$SNAP_DATA$@"
+echo "$SNAP_DATA/$@"
+
+echo "$SNAP"
+
+echo command
 command="$SNAP/$1"
+
+echo $command
+
 shift
 exec "$command" "$@"
+
+exec "$command" "$@ -v $SNAP_DATA/sounds/quindar_tones_stereo.mp3"

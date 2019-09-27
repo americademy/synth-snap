@@ -20,8 +20,8 @@ apps:
       - home
       - network-bind
 
-  pulseaudio-example:
-    command: bin/client-wrapper usr/bin/pulseaudio-example
+  play-mp3:
+    command: bin/client-wrapper usr/bin/mpg123.bin
     plugs:
       - pulseaudio
       - home
@@ -41,17 +41,6 @@ parts:
     source: .
     source-subdir: enable-sound-card
     plugin: make
-
-  pulseaudio-example-common:
-    plugin: dump
-    source: overlay
-
-  pulseaudio-example:
-    plugin: cmake
-    source: pulseaudio-example
-    build-packages:
-      - build-essential
-      - libpulse-dev
 
   mpg123:
     plugin: nil
