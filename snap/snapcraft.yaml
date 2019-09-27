@@ -53,11 +53,9 @@ parts:
       - build-essential
       - libpulse-dev
 
-  sox:
+  mpg123:
     plugin: nil
     stage-packages:
-      - sox
-      - libsox-fmt-pulse
-      - pulseaudio
+      - mpg123
 
 
