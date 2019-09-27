@@ -1,5 +1,5 @@
 name: codeverse-synth
-version: 0.0.3
+version: 0.0.4
 base: core18
 architectures:
   - build-on: armhf
@@ -55,6 +55,6 @@ parts:
 
   mpg123:
     plugin: nil
-    build-packages:
+    stage-packages:
       - mpg123
 
