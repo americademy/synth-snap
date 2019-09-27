@@ -55,8 +55,6 @@ parts:
 
   mpg123:
     plugin: nil
-    stage-packages:
+    build-packages:
       - mpg123
-
-
 
