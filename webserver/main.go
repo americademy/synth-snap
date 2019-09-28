@@ -28,9 +28,8 @@ func playSound(sound string) error {
 	file := getFilePath() + sound + ".mp3"
 	cmd := "/snap/bin/codeverse-synth.play-mp3"
 	args := []string{file}
-	if err := exec.Command(cmd, args...).Run(); err != nil {
-		return err
-	}
+	err := exec.Command(cmd, args...).Run()
+	return err
 }
 
 func play(w http.ResponseWriter, r *http.Request) {
