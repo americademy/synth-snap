@@ -46,6 +46,11 @@ parts:
     plugin: dump
     source: overlay
 
+  pulseaudio-control:
+    plugin: nil
+    stage-packages:
+      - pulseaudio-utils
+
   mpg123:
     plugin: nil
     stage-packages:
