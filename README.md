@@ -41,4 +41,3 @@ Now you can play a wav file by doing:
 ```
 sudo pulseaudio-example /var/snap/codeverse-synth/current/<file.wav>
 ```
-
