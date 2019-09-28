@@ -50,4 +50,5 @@ parts:
     plugin: nil
     stage-packages:
       - mpg123
-
+    build-packages:
+      - libpulse-dev
