@@ -4,6 +4,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"time"
 )
 
@@ -23,6 +24,15 @@ func getStatus(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
+func playSound(sound string) error {
+	file := getFilePath() + sound + ".mp3"
+	cmd := "/snap/bin/codeverse-synth.play-mp3"
+	args := []string{file}
+	if err := exec.Command(cmd, args...).Run(); err != nil {
+		return err
+	}
+}
+
 func play(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 	sounds, ok := r.URL.Query()["sound"]
@@ -34,17 +44,22 @@ func play(w http.ResponseWriter, r *http.Request) {
 
 	// Query()["sound"] will return an array of items,
 	// we only want the single item.
-	sound := sounds[0]
-	if err := assertFile(string(sound)); err != nil {
+	sound := string(sounds[0])
+	if err := assertFile(sound); err != nil {
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	w.Write([]byte(string(sound) + " OK"))
+	if err := playSound(sound); err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write([]byte(sound + " OK"))
 }
 
 func assertFile(sound string) error {
-	file := getFilePath() + sound
+	file := getFilePath() + sound + ".mp3"
 	_, err := os.Stat(file)
 	// if the sound does not exist
 	if os.IsNotExist(err) {
@@ -102,8 +117,8 @@ func assertDirectoryExists() {
 // DownloadSound will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
 func DownloadSound(sound string) error {
-	url := "http://sounds.codeverse.com/" + sound
-	file := getFilePath() + sound
+	url := "http://sounds.codeverse.com/" + sound + ".mp3"
+	file := getFilePath() + sound + ".mp3"
 
 	println("Downloading " + url)
 
