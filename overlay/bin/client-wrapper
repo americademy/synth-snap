@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-export LD_LIBRARY_PATH="$SNAP/usr/lib/arm-linux-gnueabihf"
+export LD_LIBRARY_PATH="$SNAP/usr/lib/arm-linux-gnueabihf:$SNAP/usr/lib/arm-linux-gnueabihf/pulseaudio:$LD_LIBRARY_PATH"
 export MPG123_MODDIR="$SNAP/usr/lib/arm-linux-gnueabihf/mpg123"
 
 #export PULSE_RUNTIME_PATH=/var/run/pulse
