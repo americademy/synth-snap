@@ -8,6 +8,8 @@ import (
 	"regexp"
 	"strconv"
 	"time"
+
+	"github.com/stianeikeland/go-rpio"
 )
 
 func maxClients(h http.Handler, n int) http.Handler {
@@ -42,9 +44,22 @@ func setVolume(level int) error {
 }
 
 func enableSoundCard() error {
-	cmd := os.Getenv("SNAP") + "/bin/enable-sound-card"
-	err := exec.Command(cmd).Run()
-	return err
+	// Use mcu pin 26, corresponds to physical pin 37 on the pi
+	pin = rpio.Pin(26)
+
+	// Open and map memory to access gpio, check for errors
+	if err := rpio.Open(); err != nil {
+		return err
+	}
+
+	// Unmap gpio memory when done
+	defer rpio.Close()
+
+	// Set pin to output mode
+	pin.Output()
+
+	// Turn on the pin
+	pin.High()
 }
 
 func play(w http.ResponseWriter, r *http.Request) {
@@ -151,7 +166,9 @@ func main() {
 	// start web server
 	println("Starting Server")
 
-	assertDirectoryExists()
+	if err := assertDirectoryExists(); err != nil {
+		panic(err)
+	}
 
 	if err := enableSoundCard(); err != nil {
 		panic(err)
@@ -182,13 +199,15 @@ func getFilePath() string {
 	return os.Getenv("SNAP_COMMON") + "/sounds/"
 }
 
-func assertDirectoryExists() {
+func assertDirectoryExists() error {
 	path := getFilePath()
 	// make the directory if it doesn't exist
 	if _, err := os.Stat(path); os.IsNotExist(err) {
+		err = nil
 		println("Creating folder " + path)
 		os.Mkdir(path, os.ModePerm)
 	}
+	return err
 }
 
 // DownloadSound will download a url to a local file. It's efficient because it will
