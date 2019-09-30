@@ -48,7 +48,8 @@ func enableSoundCard() error {
 	pin := rpio.Pin(26)
 
 	// Open and map memory to access gpio, check for errors
-	if err := rpio.Open(); err != nil {
+	err := rpio.Open()
+	if err != nil {
 		return err
 	}
 
