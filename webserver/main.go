@@ -60,6 +60,7 @@ func enableSoundCard() error {
 
 	// Turn on the pin
 	pin.High()
+	return err
 }
 
 func play(w http.ResponseWriter, r *http.Request) {
