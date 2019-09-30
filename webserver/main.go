@@ -41,6 +41,12 @@ func setVolume(level int) error {
 	return err
 }
 
+func enableSoundCard() error {
+	cmd := os.Getenv("SNAP") + "/bin/enable-sound-card"
+	err := exec.Command(cmd).Run()
+	return err
+}
+
 func play(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
 
@@ -58,9 +64,9 @@ func play(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// validate the sound
-	soundMatched, _ := regexp.MatchString(`^[a-z](_[a-z]+)*$`, sound)
+	soundMatched, _ := regexp.MatchString(`^[a-z]+(_[a-z]+)*$`, sound)
 	if !soundMatched {
-		w.Write([]byte("Level must underscore case"))
+		w.Write([]byte("Sound name is invalid, must be underscore case"))
 		return
 	}
 
@@ -146,6 +152,10 @@ func main() {
 	println("Starting Server")
 
 	assertDirectoryExists()
+
+	if err := enableSoundCard(); err != nil {
+		panic(err)
+	}
 
 	playHandler := http.HandlerFunc(play)
 	http.Handle("/play", maxClients(playHandler, 20))
