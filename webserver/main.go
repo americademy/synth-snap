@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"regexp"
+	"strconv"
 	"time"
 )
 
@@ -24,31 +26,30 @@ func getStatus(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
-func playSound(sound string, level string) error {
+func playSound(sound string, level int) error {
 	file := getFilePath() + sound + ".mp3"
 	cmd := os.Getenv("SNAP") + "/bin/client-wrapper"
-	args := []string{"usr/bin/mpg123.bin", "-o", "pulse", "-q", "--scale", level, file}
+	args := []string{"usr/bin/mpg123.bin", "-o", "pulse", "-q", "--scale", strconv.Itoa(level), file}
 	err := exec.Command(cmd, args...).Run()
 	return err
 }
 
-// level should be a percentage, i.e. "26%"
-func setVolume(level string) error {
-	cmd := "/snap/bin/pactl"
-	args := []string{"set-sink-volume", "0", level + "%"}
+func setVolume(level int) error {
+	cmd := os.Getenv("SNAP") + "/bin/client-wrapper"
+	args := []string{"usr/bin/pactl", "set-sink-volume", "0", strconv.Itoa(level) + "%"}
 	err := exec.Command(cmd, args...).Run()
 	return err
 }
 
 func play(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	soundParam, ok := r.URL.Query()["sound"]
 
+	// get the sound param
+	soundParam, ok := r.URL.Query()["sound"]
 	if !ok || len(soundParam[0]) < 1 {
 		w.Write([]byte("Url Param 'sound' is missing"))
 		return
 	}
-
 	// Query()["sound"] will return an array of items,
 	// we only want the single item.
 	sound := string(soundParam[0])
@@ -56,8 +57,38 @@ func play(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(err.Error()))
 		return
 	}
+	// validate the sound
+	soundMatched, _ := regexp.MatchString(`^[a-z](_[a-z]+)*$`, sound)
+	if !soundMatched {
+		w.Write([]byte("Level must underscore case"))
+		return
+	}
 
-	if err := playSound(sound, "100"); err != nil {
+	// get the level param
+	levelParam, ok := r.URL.Query()["level"]
+	if !ok || len(levelParam[0]) < 1 {
+		w.Write([]byte("Url Param 'level' is missing"))
+		return
+	}
+	// Query()["level"] will return an array of items,
+	// we only want the single item.
+	levelString := string(levelParam[0])
+	if err := assertFile(levelString); err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+	// validate the level
+	levelMatched, _ := regexp.MatchString(`^(100|[1-9][0-9]|[0-9])$`, levelString)
+	if !levelMatched {
+		w.Write([]byte("Level must be between 0 and 100"))
+		return
+	}
+	level, err := strconv.Atoi(levelString)
+	if err != nil {
+		panic(err)
+	}
+
+	if err := playSound(sound, level); err != nil {
 		w.Write([]byte(err.Error()))
 		return
 	}
@@ -67,23 +98,33 @@ func play(w http.ResponseWriter, r *http.Request) {
 
 func volume(w http.ResponseWriter, r *http.Request) {
 	enableCors(&w)
-	levelParam, ok := r.URL.Query()["level"]
 
+	// get the level param
+	levelParam, ok := r.URL.Query()["level"]
 	if !ok || len(levelParam[0]) < 1 {
-		w.Write([]byte("Url Param 'level' is missing, level should be a value between 0 and 100"))
+		w.Write([]byte("Url Param 'level' is missing"))
 		return
 	}
-
 	// Query()["level"] will return an array of items,
 	// we only want the single item.
-	level := string(levelParam[0])
+	levelString := string(levelParam[0])
+	// validate the level
+	levelMatched, _ := regexp.MatchString(`^(100|[1-9][0-9]|[0-9])$`, levelString)
+	if !levelMatched {
+		w.Write([]byte("Level must be between 0 and 100"))
+		return
+	}
+	level, err := strconv.Atoi(levelString)
+	if err != nil {
+		panic(err)
+	}
 
 	if err := setVolume(level); err != nil {
 		w.Write([]byte(err.Error()))
 		return
 	}
 
-	w.Write([]byte(level + " OK"))
+	w.Write([]byte("volume set to " + levelString + "% OK"))
 }
 
 func assertFile(sound string) error {
