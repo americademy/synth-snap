@@ -1,5 +1,5 @@
 name: codeverse-synth
-version: 0.0.4
+version: 0.0.5
 base: core18
 architectures:
   - build-on: armhf
@@ -20,27 +20,11 @@ apps:
       - home
       - network-bind
 
-  play-mp3:
-    command: bin/client-wrapper usr/bin/mpg123.bin -o pulse -q
-    plugs:
-      - pulseaudio
-      - home
-
-  enable-sound-card:
-    command: enable-sound-card
-    plugs:
-      - gpio-memory-control
-
 parts:
   web-api:
     source: .
     plugin: go
     go-importpath: github.com/americademy/synth-snap
-
-  enable-sound-card:
-    source: .
-    source-subdir: enable-sound-card
-    plugin: make
 
   client-wrapper:
     plugin: dump
