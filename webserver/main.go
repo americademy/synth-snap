@@ -45,7 +45,7 @@ func setVolume(level int) error {
 
 func enableSoundCard() error {
 	// Use mcu pin 26, corresponds to physical pin 37 on the pi
-	pin = rpio.Pin(26)
+	pin := rpio.Pin(26)
 
 	// Open and map memory to access gpio, check for errors
 	if err := rpio.Open(); err != nil {
