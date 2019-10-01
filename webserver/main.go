@@ -60,8 +60,10 @@ func enableSoundCard() error {
 	pin.Output()
 
 	// Turn on the pin
+	println("Turning on the sound card")
+
 	pin.High()
-	return err
+	return nil
 }
 
 func play(w http.ResponseWriter, r *http.Request) {
@@ -204,7 +206,8 @@ func getFilePath() string {
 func assertDirectoryExists() error {
 	path := getFilePath()
 	// make the directory if it doesn't exist
-	if _, err := os.Stat(path); os.IsNotExist(err) {
+	_, err := os.Stat(path)
+	if os.IsNotExist(err) {
 		err = nil
 		println("Creating folder " + path)
 		os.Mkdir(path, os.ModePerm)
