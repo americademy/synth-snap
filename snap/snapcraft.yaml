@@ -20,6 +20,8 @@ apps:
       - pulseaudio
       - home
       - network-bind
+      - gpio-control
+      - gpio-memory-control
 
 parts:
   web-api:
