@@ -20,6 +20,7 @@ apps:
       - audio-playback
       - home
       - network-bind
+      - gpio-memory-control
 
 parts:
   web-api:
@@ -42,3 +43,9 @@ parts:
       - mpg123
     build-packages:
       - libpulse-dev
+
+  utils:
+    plugin: nil
+    stage-packages:
+      - iperf
+      - tcpdump
