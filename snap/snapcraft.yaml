@@ -17,7 +17,6 @@ apps:
     restart-condition: always
     plugs:
       - audio-playback
-      - pulseaudio
       - home
       - network-bind
       - gpio-memory-control
@@ -43,3 +42,9 @@ parts:
       - mpg123
     build-packages:
       - libpulse-dev
+
+  utils:
+    plugin: nil
+    stage-packages:
+      - iperf
+      - tcpdump
