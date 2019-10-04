@@ -16,6 +16,7 @@ apps:
     daemon: simple
     restart-condition: always
     plugs:
+      - pulseaudio
       - audio-playback
       - home
       - network-bind
