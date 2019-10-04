@@ -17,7 +17,6 @@ apps:
     restart-condition: always
     plugs:
       - audio-playback
-      - pulseaudio
       - home
       - network-bind
 

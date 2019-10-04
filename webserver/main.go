@@ -43,6 +43,13 @@ func setVolume(level int) error {
 	return err
 }
 
+func listenFromTCP(host string) error {
+	cmd := os.Getenv("SNAP") + "/bin/client-wrapper"
+	args := []string{"usr/bin/pactl", "load-module", "module-native-protocol-tcp", "auth-ip-acl=" + host, "auth-anonymous=1"}
+	err := exec.Command(cmd, args...).Run()
+	return err
+}
+
 func enableSoundCard() error {
 	// Use mcu pin 26, corresponds to physical pin 37 on the pi
 	pin := rpio.Pin(26)
@@ -150,6 +157,33 @@ func volume(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Write([]byte("volume set to " + levelString + "% OK"))
+}
+
+func tcpStream(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+
+	// get the host param
+	hostParam, ok := r.URL.Query()["host"]
+	if !ok || len(hostParam[0]) < 1 {
+		w.Write([]byte("Url Param 'host' is missing"))
+		return
+	}
+	// Query()["host"] will return an array of items,
+	// we only want the single item.
+	host := string(hostParam[0])
+	// validate the host
+	hostMatched, _ := regexp.MatchString(`^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$`, host)
+	if !hostMatched {
+		w.Write([]byte("Source should be a valid IP address"))
+		return
+	}
+
+	if err := listenFromTCP(host); err != nil {
+		w.Write([]byte(err.Error()))
+		return
+	}
+
+	w.Write([]byte("listening to TCP stream from " + host + "% OK"))
 }
 
 func assertFile(sound string) error {
